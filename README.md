@@ -98,8 +98,8 @@ and you don't have to do nothing, obviously if you delete container you will los
 When you run the docker container logs and BBDD data file are in the same directories inside the /app directory.
 
 ### IDE
-If you load the project in an IDE like Intellij the application generate in data path the BBDD file and in logs path application logs,
+If you load the project in an IDE like Intellij the application generate data path the BBDD file and in logs path application logs,
 
 ##### Personal notes
-There are multiples implementations, I did the projec and the deploy thinking the best implementation according to the documentation and specifications.
+There are multiple implementations, I did the project and the deploy thinking the best implementation according to the documentation and specifications.
 I hope you like it and have a conversation to speak about it. I enjoyed so much doing it. Thanks for the opportunity.
