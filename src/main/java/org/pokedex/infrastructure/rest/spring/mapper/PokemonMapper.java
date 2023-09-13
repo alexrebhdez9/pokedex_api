@@ -1,6 +1,5 @@
 package org.pokedex.infrastructure.rest.spring.mapper;
 
-import org.mapstruct.InjectionStrategy;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingConstants;
 import org.pokedex.domain.entity.Pokemon;
