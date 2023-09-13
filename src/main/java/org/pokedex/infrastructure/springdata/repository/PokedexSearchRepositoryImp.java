@@ -34,19 +34,19 @@ public class PokedexSearchRepositoryImp implements PokedexSearchRepository {
     @Override
     public Pokemon findById(Long pokemonId) {
 
-        Optional<PokemonEntity> pokemonOptional = pokedexPokemonSpringDataJpaRepository.findById(pokemonId);
-
-        if (pokemonOptional.isEmpty()) {
-
-            throw new PokedexPokemonNotFoundException();
-
-        } else {
-
-            Pokemon pokemon = pokemonEntityMapper.toDomain(pokemonOptional.get());
-
-            return pokemon;
-
-        }
+//        Optional<Pokemon> pokemon = pokedexPokemonSpringDataJpaRepository.findById(pokemonId);
+//
+//        if (pokemonOptional.isEmpty()) {
+//
+//            throw new PokedexPokemonNotFoundException();
+//
+//        } else {
+//
+//            return pokemon;
+//
+//        }
+        return pokemonEntityMapper.toDomain(pokedexPokemonSpringDataJpaRepository
+                .findById(pokemonId).orElseThrow(() -> new PokedexPokemonNotFoundException()));
     }
 
     /**

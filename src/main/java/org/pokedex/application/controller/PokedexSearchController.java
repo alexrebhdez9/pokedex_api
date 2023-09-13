@@ -1,10 +1,8 @@
 package org.pokedex.application.controller;
 
-import org.modelmapper.ModelMapper;
 import org.pokedex.application.dto.PokemonDetailsDto;
-import org.pokedex.domain.entity.Pokemon;
 import org.pokedex.domain.exception.PokedexPokemonNotFoundException;
-import org.pokedex.domain.services.search.PokedexSearchService;
+import org.pokedex.infrastructure.services.search.PokedexSearchService;
 import org.pokedex.infrastructure.configurarion.aspects.PokedexLoggingAspect;
 import org.pokedex.infrastructure.rest.spring.dto.PokemonDto;
 import org.pokedex.infrastructure.rest.spring.mapper.PokemonMapper;
@@ -27,8 +25,6 @@ public class PokedexSearchController {
     private PokedexSearchService pokedexSearchService;
 
     private PokemonMapper pokemonMapper;
-
-    private ModelMapper modelMapper;
 
 
     public PokedexSearchController(PokedexSearchService pokedexSearchService, PokemonMapper pokemonMapper) {
@@ -61,7 +57,7 @@ public class PokedexSearchController {
     List<PokemonDto> searchPokemonByText(@PathVariable String text) throws PokedexPokemonNotFoundException {
 
         return pokedexSearchService.searchPokemonByText(text).stream()
-                .map(pokemon -> modelMapper.map(pokemon, PokemonDto.class))
+                .map(pokemonMapper::toPokemonDto)
                 .collect(Collectors.toList());
 
     }
@@ -74,9 +70,9 @@ public class PokedexSearchController {
      */
     @GetMapping(value = {"/pokemonById/{pokemonId}"}, produces = "application/json; charset=utf-8")
     @PokedexLoggingAspect
-    Pokemon searchPokemonById(@PathVariable Long pokemonId) throws PokedexPokemonNotFoundException {
+    PokemonDto searchPokemonById(@PathVariable Long pokemonId) throws PokedexPokemonNotFoundException {
 
-            return pokedexSearchService.searchPokemonById(pokemonId);
+            return pokemonMapper.toPokemonDto(pokedexSearchService.searchPokemonById(pokemonId));
 
     }
 
@@ -92,7 +88,7 @@ public class PokedexSearchController {
     List<PokemonDto> searchPokemonByType(@PathVariable String pokemonType) throws PokedexPokemonNotFoundException  {
 
             return pokedexSearchService.searchPokemonByType(pokemonType).stream()
-                    .map(pokemon -> modelMapper.map(pokemon, PokemonDto.class))
+                    .map(pokemonMapper::toPokemonDto)
                     .collect(Collectors.toList());
 
     }
@@ -108,7 +104,7 @@ public class PokedexSearchController {
     List<PokemonDto> getAllPokemon() throws PokedexPokemonNotFoundException {
 
         return pokedexSearchService.getAllPokemon().stream()
-                .map(pokemon -> modelMapper.map(pokemon, PokemonDto.class))
+                .map(pokemonMapper::toPokemonDto)
                 .collect(Collectors.toList());
 
     }

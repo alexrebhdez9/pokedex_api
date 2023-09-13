@@ -1,4 +1,4 @@
-package org.pokedex.domain.services.search;
+package org.pokedex.infrastructure.services.search;
 
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -6,7 +6,6 @@ import org.pokedex.application.dto.PokemonDetailsDto;
 import org.pokedex.domain.entity.Pokemon;
 import org.pokedex.domain.exception.PokedexPokemonNotFoundException;
 import org.pokedex.domain.repository.PokedexSearchRepository;
-import org.pokedex.infrastructure.springdata.dbo.PokemonEntity;
 import org.pokedex.infrastructure.springdata.mapper.PokemonEntityMapper;
 import org.springframework.stereotype.Service;
 

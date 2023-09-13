@@ -1,4 +1,4 @@
-package org.pokedex.domain.services.favourites;
+package org.pokedex.infrastructure.services.favourites;
 
 import org.pokedex.domain.entity.Pokemon;
 import org.pokedex.domain.exception.PokedexAddFavouritesException;

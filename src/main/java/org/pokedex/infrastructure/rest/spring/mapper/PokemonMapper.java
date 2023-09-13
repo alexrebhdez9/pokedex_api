@@ -6,7 +6,7 @@ import org.mapstruct.MappingConstants;
 import org.pokedex.domain.entity.Pokemon;
 import org.pokedex.infrastructure.rest.spring.dto.PokemonDto;
 
-@Mapper(componentModel = MappingConstants.ComponentModel.SPRING, injectionStrategy = InjectionStrategy.CONSTRUCTOR)
+@Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface PokemonMapper {
 
     PokemonDto toPokemonDto (Pokemon pokemon);

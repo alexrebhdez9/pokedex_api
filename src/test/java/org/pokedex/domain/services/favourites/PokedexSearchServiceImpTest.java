@@ -8,7 +8,7 @@ import org.pokedex.application.dto.PokemonDetailsDto;
 import org.pokedex.domain.entity.Pokemon;
 import org.pokedex.domain.exception.PokedexPokemonNotFoundException;
 import org.pokedex.domain.repository.PokedexSearchRepository;
-import org.pokedex.domain.services.search.PokedexSearchServiceImp;
+import org.pokedex.infrastructure.services.search.PokedexSearchServiceImp;
 import org.pokedex.mother.PokemonDetailsMother;
 import org.pokedex.mother.PokemonMother;
 import org.springframework.test.context.junit4.SpringRunner;

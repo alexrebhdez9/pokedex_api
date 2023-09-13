@@ -2,7 +2,7 @@ package org.pokedex.application.controller;
 
 import org.pokedex.domain.exception.PokedexAddFavouritesException;
 import org.pokedex.domain.exception.PokedexRemoveFavouritesException;
-import org.pokedex.domain.services.favourites.PokedexFavouritesService;
+import org.pokedex.infrastructure.services.favourites.PokedexFavouritesService;
 import org.pokedex.infrastructure.configurarion.aspects.PokedexLoggingAspect;
 import org.pokedex.infrastructure.rest.spring.dto.PokemonDto;
 import org.pokedex.infrastructure.rest.spring.mapper.PokemonMapper;

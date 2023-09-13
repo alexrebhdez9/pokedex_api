@@ -7,7 +7,7 @@ import org.mockito.Mockito;
 import org.pokedex.application.dto.PokemonDetailsDto;
 import org.pokedex.domain.entity.Pokemon;
 import org.pokedex.domain.exception.PokedexPokemonNotFoundException;
-import org.pokedex.domain.services.search.PokedexSearchService;
+import org.pokedex.infrastructure.services.search.PokedexSearchService;
 import org.pokedex.mother.PokemonDetailsMother;
 import org.pokedex.mother.PokemonMother;
 import org.springframework.beans.factory.annotation.Autowired;

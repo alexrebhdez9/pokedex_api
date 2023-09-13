@@ -6,7 +6,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.pokedex.domain.entity.Pokemon;
-import org.pokedex.domain.services.favourites.PokedexFavouritesService;
+import org.pokedex.infrastructure.services.favourites.PokedexFavouritesService;
 import org.pokedex.mother.PokemonMother;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;

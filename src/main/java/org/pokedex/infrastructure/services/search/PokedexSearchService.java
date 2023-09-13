@@ -1,4 +1,4 @@
-package org.pokedex.domain.services.search;
+package org.pokedex.infrastructure.services.search;
 
 import org.pokedex.application.dto.PokemonDetailsDto;
 import org.pokedex.domain.entity.Pokemon;
