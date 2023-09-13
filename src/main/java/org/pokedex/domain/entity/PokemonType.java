@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
+import org.pokedex.infrastructure.springdata.dbo.PokemonEntity;
 
 @Entity
 @Table(name = "pokemon_type")
@@ -22,6 +23,6 @@ public class PokemonType {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "pokemon_id")
-    private Pokemon pokemon;
+    private PokemonEntity pokemon;
 
 }

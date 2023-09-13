@@ -1,24 +1,36 @@
 package org.pokedex.domain.services.favourites;
 
+import lombok.RequiredArgsConstructor;
 import org.pokedex.domain.entity.Pokemon;
 import org.pokedex.domain.exception.PokedexAddFavouritesException;
 import org.pokedex.domain.exception.PokedexPokemonNotFoundException;
 import org.pokedex.domain.exception.PokedexRemoveFavouritesException;
 import org.pokedex.domain.repository.PokedexFavouritesRepository;
 import org.pokedex.domain.repository.PokedexSearchRepository;
+import org.pokedex.infrastructure.springdata.mapper.PokemonEntityMapper;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
+@Service
+@RequiredArgsConstructor
 public class PokedexFavouritesServiceImp implements PokedexFavouritesService {
 
-    private final PokedexFavouritesRepository pokedexFavouritesRepository;
-    private final PokedexSearchRepository pokedexSearchRepository;
+    private PokedexFavouritesRepository pokedexFavouritesRepository;
 
-    public PokedexFavouritesServiceImp(PokedexFavouritesRepository pokedexFavouritesRepository, PokedexSearchRepository pokedexSearchRepository) {
+    private PokedexSearchRepository pokedexSearchRepository;
+
+    private PokemonEntityMapper pokemonEntityMapper;
+
+
+    public PokedexFavouritesServiceImp(PokedexFavouritesRepository pokedexFavouritesRepository,
+                                       PokedexSearchRepository pokedexSearchRepository,
+                                       PokemonEntityMapper pokemonEntityMapper) {
         this.pokedexFavouritesRepository = pokedexFavouritesRepository;
         this.pokedexSearchRepository = pokedexSearchRepository;
+        this.pokemonEntityMapper = pokemonEntityMapper;
     }
 
     /**
@@ -83,7 +95,8 @@ public class PokedexFavouritesServiceImp implements PokedexFavouritesService {
 
         } else {
 
-            return StreamSupport.stream(iterator.spliterator(), false)
+            return StreamSupport
+                    .stream(iterator.spliterator(), true)
                     .collect(Collectors.toList());
 
         }

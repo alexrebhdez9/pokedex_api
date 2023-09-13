@@ -3,6 +3,7 @@ package org.pokedex.domain.services.search;
 import org.pokedex.application.dto.PokemonDetailsDto;
 import org.pokedex.domain.entity.Pokemon;
 import org.pokedex.domain.exception.PokedexPokemonNotFoundException;
+import org.pokedex.infrastructure.rest.spring.dto.PokemonDto;
 
 import java.util.List;
 

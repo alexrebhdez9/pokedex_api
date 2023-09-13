@@ -1,21 +1,22 @@
-package org.pokedex.infrastructure.repository;
+package org.pokedex.infrastructure.springdata.repository;
 
 import org.pokedex.domain.entity.Pokemon;
 import org.pokedex.domain.exception.PokedexAddFavouritesException;
 import org.pokedex.domain.exception.PokedexPokemonNotFoundException;
 import org.pokedex.domain.exception.PokedexRemoveFavouritesException;
 import org.pokedex.domain.repository.PokedexFavouritesRepository;
-import org.pokedex.infrastructure.repository.jpa.PokedexPokemonSpringDataJpaRepository;
+import org.pokedex.infrastructure.springdata.config.PokedexPokemonSpringDataJpaRepository;
+import org.pokedex.infrastructure.springdata.dbo.PokemonEntity;
+import org.pokedex.infrastructure.springdata.mapper.PokemonEntityMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Primary;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
-@Component
-@Primary
+@Repository
 public class PokedexFavouritesRepositoryImp implements PokedexFavouritesRepository {
 
-
     private final PokedexPokemonSpringDataJpaRepository pokedexPokemonSpringDataJpaRepository;
+
+    private PokemonEntityMapper pokemonEntityMapper;
 
     @Autowired
     public PokedexFavouritesRepositoryImp(final PokedexPokemonSpringDataJpaRepository pokedexPokemonSpringDataJpaRepository) {
@@ -29,7 +30,7 @@ public class PokedexFavouritesRepositoryImp implements PokedexFavouritesReposito
 
         try {
 
-            pokedexPokemonSpringDataJpaRepository.save(pokemon);
+            pokedexPokemonSpringDataJpaRepository.save(pokemonEntityMapper.toDbo(pokemon));
 
         } catch (Exception e) {
 
@@ -47,7 +48,7 @@ public class PokedexFavouritesRepositoryImp implements PokedexFavouritesReposito
 
         try {
 
-            pokedexPokemonSpringDataJpaRepository.save(pokemon);
+            pokedexPokemonSpringDataJpaRepository.save(pokemonEntityMapper.toDbo(pokemon));
 
         } catch (Exception e) {
 
@@ -69,7 +70,7 @@ public class PokedexFavouritesRepositoryImp implements PokedexFavouritesReposito
 
         } else {
 
-            return  pokemonList;
+            return pokemonList;
 
         }
 

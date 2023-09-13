@@ -7,6 +7,9 @@ import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.pokedex.domain.entity.Pokemon;
 import org.pokedex.application.dto.PokemonDetailsDto;
+import org.pokedex.infrastructure.springdata.config.PokedexPokemonSpringDataJpaRepository;
+import org.pokedex.infrastructure.springdata.dbo.PokemonEntity;
+import org.pokedex.infrastructure.springdata.mapper.PokemonEntityMapper;
 import org.pokedex.mother.PokemonDetailsMother;
 import org.pokedex.mother.PokemonMother;
 
@@ -20,6 +23,8 @@ public class PokedexPokemonSpringDataJpaRepositoryTest {
 
     @Mock
     private PokedexPokemonSpringDataJpaRepository repository;
+
+    private PokemonEntityMapper pokemonEntityMapper;
 
     @Test
     public void testGetPokemonByName() {

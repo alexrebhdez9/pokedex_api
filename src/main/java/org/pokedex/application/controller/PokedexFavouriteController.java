@@ -1,10 +1,11 @@
 package org.pokedex.application.controller;
 
-import org.pokedex.domain.entity.Pokemon;
 import org.pokedex.domain.exception.PokedexAddFavouritesException;
 import org.pokedex.domain.exception.PokedexRemoveFavouritesException;
 import org.pokedex.domain.services.favourites.PokedexFavouritesService;
 import org.pokedex.infrastructure.configurarion.aspects.PokedexLoggingAspect;
+import org.pokedex.infrastructure.rest.spring.dto.PokemonDto;
+import org.pokedex.infrastructure.rest.spring.mapper.PokemonMapper;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Component
@@ -19,51 +21,56 @@ import java.util.List;
 @RequestMapping(value = "/v1/favourite")
 public class PokedexFavouriteController {
 
-    private PokedexFavouritesService pokedexFavouritesService;
+    private final PokedexFavouritesService pokedexFavouritesService;
 
-    public PokedexFavouriteController(PokedexFavouritesService pokedexFavouritesService) {
+    private PokemonMapper pokemonMapper;
+
+    public PokedexFavouriteController(PokedexFavouritesService pokedexFavouritesService, PokemonMapper pokemonMapper) {
         this.pokedexFavouritesService = pokedexFavouritesService;
+        this.pokemonMapper = pokemonMapper;
     }
 
     /**
      * Add a Pokemon to favourites
-     * @param pokemonName
-     * @return
-     * @throws PokedexAddFavouritesException
+     * @param pokemonName: Pokemon Name
+     * @return Json
+     * @throws PokedexAddFavouritesException PokedexAddFavouritesException
      */
     @GetMapping(value = {"/add/{pokemonName}"}, produces = "application/json; charset=utf-8")
     @PokedexLoggingAspect
-    Pokemon addFavourite(@PathVariable String pokemonName) throws PokedexAddFavouritesException {
+    PokemonDto addFavourite(@PathVariable String pokemonName) throws PokedexAddFavouritesException {
 
-        return pokedexFavouritesService.addPokemonFavourite(pokemonName);
+        return pokemonMapper.toPokemonDto(pokedexFavouritesService.addPokemonFavourite(pokemonName));
 
     }
 
 
     /**
-     * Delete a Pokemon from favourites
-     * @param pokemonName
-     * @return
-     * @throws PokedexRemoveFavouritesException
+     * Delete a Pokémon from favourites
+     * @param pokemonName pokemon Name
+     * @return Json
+     * @throws PokedexRemoveFavouritesException PokedexRemoveFavouritesException
      */
     @GetMapping(value = {"/remove/{pokemonName}"}, produces = "application/json; charset=utf-8")
     @PokedexLoggingAspect
-    Pokemon quitFavourite(@PathVariable String pokemonName) throws PokedexRemoveFavouritesException {
+    PokemonDto quitFavourite(@PathVariable String pokemonName) throws PokedexRemoveFavouritesException {
 
-        return pokedexFavouritesService.removePokemonFavourite(pokemonName);
+        return pokemonMapper.toPokemonDto(pokedexFavouritesService.removePokemonFavourite(pokemonName));
 
     }
 
     /**
      * Retrieve all favourites Pokemons
-     * @return
-     * @throws PokedexRemoveFavouritesException
+     * @return Json
+     * @throws PokedexRemoveFavouritesException PokedexRemoveFavouritesException
      */
     @GetMapping(value = {"/getFavourites"}, produces = "application/json; charset=utf-8")
     @PokedexLoggingAspect
-    List<Pokemon> getFavourites() throws PokedexRemoveFavouritesException {
+    List<PokemonDto> getFavourites() throws PokedexRemoveFavouritesException {
 
-        return pokedexFavouritesService.getAllFavourites();
+        return pokedexFavouritesService.getAllFavourites().stream()
+                .map(pokemonMapper::toPokemonDto)
+                .collect(Collectors.toList());
 
     }
 }

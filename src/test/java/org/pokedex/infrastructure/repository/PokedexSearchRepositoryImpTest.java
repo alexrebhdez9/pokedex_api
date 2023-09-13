@@ -2,24 +2,30 @@ package org.pokedex.infrastructure.repository;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.pokedex.domain.entity.Pokemon;
+import org.modelmapper.ModelMapper;
 import org.pokedex.application.dto.PokemonDetailsDto;
+import org.pokedex.domain.entity.Pokemon;
 import org.pokedex.domain.exception.PokedexPokemonNotFoundException;
-import org.pokedex.infrastructure.repository.jpa.PokedexPokemonSpringDataJpaRepository;
+import org.pokedex.infrastructure.springdata.config.PokedexPokemonSpringDataJpaRepository;
+import org.pokedex.infrastructure.springdata.dbo.PokemonEntity;
+import org.pokedex.infrastructure.springdata.mapper.PokemonEntityMapper;
+import org.pokedex.infrastructure.springdata.repository.PokedexSearchRepositoryImp;
 import org.pokedex.mother.PokemonDetailsMother;
 import org.pokedex.mother.PokemonMother;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class PokedexSearchRepositoryImpTest {
@@ -30,19 +36,29 @@ public class PokedexSearchRepositoryImpTest {
     @InjectMocks
     private PokedexSearchRepositoryImp pokedexSearchRepository;
 
+    @Mock
+    private ModelMapper modelMapper;
+
+    @Mock
+    private Mapper mapper;
+
+    private PokemonEntityMapper pokemonEntityMapper;
+
     @Test
     public void testFindById() {
         // Arrange
         Long pokemonId = 1L;
-        Pokemon expectedPokemon = PokemonMother.buildPokemon("Pikachu", 100, 0, 50L, 80, 60L);
-        Mockito.when(pokedexPokemonSpringDataJpaRepository.findById(pokemonId)).thenReturn(Optional.of(expectedPokemon));
+        Pokemon pokemon = PokemonMother.buildPokemon("Pikachu", 100, 0, 50L, 80, 60L);
+
+        PokemonEntity expectedPokemon = modelMapper.map(pokemon, PokemonEntity.class);
+        when(pokedexPokemonSpringDataJpaRepository.findById(pokemonId)).thenReturn(Optional.ofNullable(expectedPokemon));
 
         // Act
-        Optional<Pokemon> result = pokedexSearchRepository.findById(pokemonId);
+        Pokemon result = pokedexSearchRepository.findById(pokemonId);
 
         // Assert
-        assertTrue(result.isPresent());
-        assertEquals(expectedPokemon, result.get());
+//        assertTrue(result.isPresent());
+        assertEquals(pokemonEntityMapper.toDomain(expectedPokemon), result);
     }
 
     @Test(expected = PokedexPokemonNotFoundException.class)
@@ -50,7 +66,7 @@ public class PokedexSearchRepositoryImpTest {
 
         // Arrange
         Long pokemonId = 1L;
-        Mockito.when(pokedexPokemonSpringDataJpaRepository.findById(pokemonId)).thenReturn(Optional.empty());
+        when(pokedexPokemonSpringDataJpaRepository.findById(pokemonId)).thenReturn(Optional.empty());
 
         // Act
         pokedexSearchRepository.findById(pokemonId);
@@ -61,7 +77,7 @@ public class PokedexSearchRepositoryImpTest {
         // Arrange
         String pokemonName = "Pikachu";
         Pokemon expectedPokemon = PokemonMother.buildPokemon(pokemonName, 100, 0, 50L, 80, 60L);
-        Mockito.when(pokedexPokemonSpringDataJpaRepository.findByName(pokemonName)).thenReturn(expectedPokemon);
+        when(pokedexPokemonSpringDataJpaRepository.findByName(pokemonName)).thenReturn(expectedPokemon);
 
         // Act
         Pokemon result = pokedexSearchRepository.findByName(pokemonName);
@@ -74,7 +90,7 @@ public class PokedexSearchRepositoryImpTest {
     public void testFindByNameNotFound() {
         // Arrange
         String pokemonName = "Pikachu";
-        Mockito.when(pokedexPokemonSpringDataJpaRepository.findByName(pokemonName)).thenReturn(null);
+        when(pokedexPokemonSpringDataJpaRepository.findByName(pokemonName)).thenReturn(null);
 
         // Act
         pokedexSearchRepository.findByName(pokemonName);
@@ -88,7 +104,7 @@ public class PokedexSearchRepositoryImpTest {
                 PokemonMother.buildPokemon("Pikachu", 100, 0, 50L, 80, 60L),
                 PokemonMother.buildPokemon("Raichu", 120, 0, 70L, 90, 80L)
         );
-        Mockito.when(pokedexPokemonSpringDataJpaRepository.findByTypesType(pokemonType)).thenReturn(expectedPokemons);
+        when(pokedexPokemonSpringDataJpaRepository.findByTypesType(pokemonType)).thenReturn(expectedPokemons);
 
         // Act
         List<Pokemon> result = pokedexSearchRepository.findByType(pokemonType);
@@ -101,7 +117,7 @@ public class PokedexSearchRepositoryImpTest {
     public void testFindByTypeNotFound() {
         // Arrange
         String pokemonType = "Fire";
-        Mockito.when(pokedexPokemonSpringDataJpaRepository.findByTypesType(pokemonType)).thenReturn(Collections.emptyList());
+        when(pokedexPokemonSpringDataJpaRepository.findByTypesType(pokemonType)).thenReturn(Collections.emptyList());
 
         // Act
         pokedexSearchRepository.findByType(pokemonType);
@@ -110,24 +126,27 @@ public class PokedexSearchRepositoryImpTest {
     @Test
     public void testGetAllPokemom() {
         // Arrange
-        List<Pokemon> expectedPokemons = Arrays.asList(
-                PokemonMother.buildPokemon("Pikachu", 100, 0, 50L, 80, 60L),
-                PokemonMother.buildPokemon("Charmander", 90, 0, 60L, 70, 70L)
+        List<PokemonEntity> expectedPokemons = Arrays.asList(
+                pokemonEntityMapper.toDbo(PokemonMother.buildPokemon("Pikachu", 100, 0, 50L, 80, 60L)),
+                pokemonEntityMapper.toDbo(PokemonMother.buildPokemon("Charmander", 90, 0, 60L, 70, 70L))
         );
-        Mockito.when(pokedexPokemonSpringDataJpaRepository.findAll()).thenReturn(expectedPokemons);
+        when(pokedexPokemonSpringDataJpaRepository.findAll()).thenReturn(expectedPokemons);
 
         // Act
         Iterable<Pokemon> result = pokedexSearchRepository.getAllPokemon();
 
         // Assert
-        assertEquals(expectedPokemons, result);
+        assertEquals(expectedPokemons, StreamSupport
+                .stream(result.spliterator(), true)
+                .map(pokemon -> pokemonEntityMapper.toDbo(pokemon))
+                .collect(Collectors.toList()));
     }
 
     @Test(expected = PokedexPokemonNotFoundException.class)
     public void testGetAllPokemomEmpty() {
 
         // Arrange
-        Mockito.when(pokedexPokemonSpringDataJpaRepository.findAll()).thenReturn(Collections.emptyList());
+        when(pokedexPokemonSpringDataJpaRepository.findAll()).thenReturn(Collections.emptyList());
 
         // Act
         pokedexSearchRepository.getAllPokemon();
@@ -140,7 +159,7 @@ public class PokedexSearchRepositoryImpTest {
         // Arrange
         String pokemonName = "Pikachu";
         PokemonDetailsDto expectedDetails = PokemonDetailsMother.buildPokemonDetails(100, 50L, 80, 60L);
-        Mockito.when(pokedexPokemonSpringDataJpaRepository.getPokemonDetails(pokemonName)).thenReturn(expectedDetails);
+        when(pokedexPokemonSpringDataJpaRepository.getPokemonDetails(pokemonName)).thenReturn(expectedDetails);
 
         // Act
         PokemonDetailsDto result = pokedexSearchRepository.findDetailsByPokemon(pokemonName);
@@ -155,7 +174,7 @@ public class PokedexSearchRepositoryImpTest {
 
         // Arrange
         String pokemonName = "Pikachu";
-        Mockito.when(pokedexPokemonSpringDataJpaRepository.getPokemonDetails(pokemonName)).thenReturn(null);
+        when(pokedexPokemonSpringDataJpaRepository.getPokemonDetails(pokemonName)).thenReturn(null);
 
         // Act
         pokedexSearchRepository.findDetailsByPokemon(pokemonName);

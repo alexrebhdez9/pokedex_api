@@ -1,10 +1,14 @@
 package org.pokedex.application.controller;
 
+import org.modelmapper.ModelMapper;
 import org.pokedex.application.dto.PokemonDetailsDto;
 import org.pokedex.domain.entity.Pokemon;
 import org.pokedex.domain.exception.PokedexPokemonNotFoundException;
 import org.pokedex.domain.services.search.PokedexSearchService;
 import org.pokedex.infrastructure.configurarion.aspects.PokedexLoggingAspect;
+import org.pokedex.infrastructure.rest.spring.dto.PokemonDto;
+import org.pokedex.infrastructure.rest.spring.mapper.PokemonMapper;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -12,18 +16,25 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 @RestController
 @RequestMapping(value = "/v1/search")
+@ComponentScan("org.pokedex.domain.services")
 public class PokedexSearchController {
 
     private PokedexSearchService pokedexSearchService;
 
-    public PokedexSearchController(PokedexSearchService pokedexSearchService) {
-        this.pokedexSearchService = pokedexSearchService;
-    }
+    private PokemonMapper pokemonMapper;
 
+    private ModelMapper modelMapper;
+
+
+    public PokedexSearchController(PokedexSearchService pokedexSearchService, PokemonMapper pokemonMapper) {
+        this.pokedexSearchService = pokedexSearchService;
+        this.pokemonMapper = pokemonMapper;
+    }
 
     /**
      * Retrieve a Pokemon by name
@@ -33,9 +44,9 @@ public class PokedexSearchController {
      */
     @GetMapping(value = {"/pokemonByName/{pokemonName}"}, produces = "application/json; charset=utf-8")
     @PokedexLoggingAspect
-    Pokemon searchPokemonByName(@PathVariable String pokemonName) throws PokedexPokemonNotFoundException {
+    PokemonDto searchPokemonByName(@PathVariable String pokemonName) throws PokedexPokemonNotFoundException {
 
-        return pokedexSearchService.searchPokemonByName(pokemonName);
+        return pokemonMapper.toPokemonDto(pokedexSearchService.searchPokemonByName(pokemonName));
 
     }
 
@@ -47,9 +58,11 @@ public class PokedexSearchController {
      */
     @GetMapping(value = {"/pokemonByText/{text}"}, produces = "application/json; charset=utf-8")
     @PokedexLoggingAspect
-    List<Pokemon> searchPokemonByText(@PathVariable String text) throws PokedexPokemonNotFoundException {
+    List<PokemonDto> searchPokemonByText(@PathVariable String text) throws PokedexPokemonNotFoundException {
 
-        return pokedexSearchService.searchPokemonByText(text);
+        return pokedexSearchService.searchPokemonByText(text).stream()
+                .map(pokemon -> modelMapper.map(pokemon, PokemonDto.class))
+                .collect(Collectors.toList());
 
     }
 
@@ -76,9 +89,11 @@ public class PokedexSearchController {
      */
     @GetMapping(value = {"/pokemonByType/{pokemonType}"}, produces = "application/json; charset=utf-8")
     @PokedexLoggingAspect
-    List<Pokemon> searchPokemonByType(@PathVariable String pokemonType) throws PokedexPokemonNotFoundException  {
+    List<PokemonDto> searchPokemonByType(@PathVariable String pokemonType) throws PokedexPokemonNotFoundException  {
 
-            return pokedexSearchService.searchPokemonByType(pokemonType);
+            return pokedexSearchService.searchPokemonByType(pokemonType).stream()
+                    .map(pokemon -> modelMapper.map(pokemon, PokemonDto.class))
+                    .collect(Collectors.toList());
 
     }
 
@@ -90,9 +105,11 @@ public class PokedexSearchController {
      */
     @GetMapping(value = {"/getAllPokemon"}, produces = "application/json; charset=utf-8")
     @PokedexLoggingAspect
-    List<Pokemon> getAllPokemon() throws PokedexPokemonNotFoundException {
+    List<PokemonDto> getAllPokemon() throws PokedexPokemonNotFoundException {
 
-        return pokedexSearchService.getAllPokemon();
+        return pokedexSearchService.getAllPokemon().stream()
+                .map(pokemon -> modelMapper.map(pokemon, PokemonDto.class))
+                .collect(Collectors.toList());
 
     }
 

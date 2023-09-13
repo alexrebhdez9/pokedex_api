@@ -4,8 +4,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.pokedex.domain.entity.Pokemon;
 import org.pokedex.application.dto.PokemonDetailsDto;
+import org.pokedex.domain.entity.Pokemon;
 import org.pokedex.domain.exception.PokedexPokemonNotFoundException;
 import org.pokedex.domain.repository.PokedexSearchRepository;
 import org.pokedex.domain.services.search.PokedexSearchServiceImp;
@@ -13,9 +13,13 @@ import org.pokedex.mother.PokemonDetailsMother;
 import org.pokedex.mother.PokemonMother;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.NoSuchElementException;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 
 @RunWith(SpringRunner.class)
@@ -59,7 +63,7 @@ public class PokedexSearchServiceImpTest {
         // Arrange
         Long pokemonId = 1L;
         Pokemon expectedPokemon = PokemonMother.buildPokemon("Pikachu", 100, 0, 50L, 80, 60L);
-        when(pokedexSearchRepository.findById(pokemonId)).thenReturn(Optional.of(expectedPokemon));
+        when(pokedexSearchRepository.findById(pokemonId)).thenReturn(expectedPokemon);
 
         // Act
         Pokemon result = pokedexSearchService.searchPokemonById(pokemonId);
@@ -73,7 +77,7 @@ public class PokedexSearchServiceImpTest {
 
         // Arrange
         Long pokemonId = 1L;
-        when(pokedexSearchRepository.findById(pokemonId)).thenReturn(Optional.empty());
+        when(pokedexSearchRepository.findById(pokemonId)).thenReturn(null);
 
         // Act
         pokedexSearchService.searchPokemonById(pokemonId);
@@ -85,8 +89,8 @@ public class PokedexSearchServiceImpTest {
         // Arrange
         String pokemonType = "Fire";
         List<Pokemon> expectedPokemons = Arrays.asList(
-            PokemonMother.buildPokemon("Charmander", 100, 0, 50L, 80, 60L),
-            PokemonMother.buildPokemon("Charizard", 120, 0, 70L, 90, 80L)
+                PokemonMother.buildPokemon("Charmander", 100, 0, 50L, 80, 60L),
+                PokemonMother.buildPokemon("Charizard", 120, 0, 70L, 90, 80L)
         );
         when(pokedexSearchRepository.findByType(pokemonType)).thenReturn(expectedPokemons);
 
@@ -114,6 +118,7 @@ public class PokedexSearchServiceImpTest {
         // Arrange
         Pokemon pokemon1 = PokemonMother.buildPokemon("Pikachu", 100, 0, 50L, 80, 60L);
         Pokemon pokemon2 = PokemonMother.buildPokemon("Charmander", 90, 0, 60L, 70, 70L);
+
         Iterable<Pokemon> expectedPokemons = Arrays.asList(pokemon1, pokemon2);
         when(pokedexSearchRepository.getAllPokemon()).thenReturn(expectedPokemons);
 

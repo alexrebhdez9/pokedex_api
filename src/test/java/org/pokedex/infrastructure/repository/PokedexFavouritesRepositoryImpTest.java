@@ -8,7 +8,9 @@ import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.pokedex.domain.entity.Pokemon;
 import org.pokedex.domain.exception.PokedexPokemonNotFoundException;
-import org.pokedex.infrastructure.repository.jpa.PokedexPokemonSpringDataJpaRepository;
+import org.pokedex.infrastructure.springdata.config.PokedexPokemonSpringDataJpaRepository;
+import org.pokedex.infrastructure.springdata.mapper.PokemonEntityMapper;
+import org.pokedex.infrastructure.springdata.repository.PokedexFavouritesRepositoryImp;
 import org.pokedex.mother.PokemonMother;
 
 import java.util.Arrays;
@@ -26,6 +28,8 @@ public class PokedexFavouritesRepositoryImpTest {
     @InjectMocks
     private PokedexFavouritesRepositoryImp pokedexFavouritesRepository;
 
+    private PokemonEntityMapper pokemonEntityMapper;
+
     @Test
     public void testAddFavourite() {
 
@@ -37,7 +41,7 @@ public class PokedexFavouritesRepositoryImpTest {
 
         // Assert
         assertEquals(1, pokemon.getFavourite());
-        Mockito.verify(pokedexPokemonSpringDataJpaRepository, Mockito.times(1)).save(pokemon);
+        Mockito.verify(pokedexPokemonSpringDataJpaRepository, Mockito.times(1)).save(pokemonEntityMapper.toDbo(pokemon));
     }
 
     @Test
@@ -51,7 +55,7 @@ public class PokedexFavouritesRepositoryImpTest {
 
         // Assert
         assertEquals(0, pokemon.getFavourite());
-        Mockito.verify(pokedexPokemonSpringDataJpaRepository, Mockito.times(1)).save(pokemon);
+        Mockito.verify(pokedexPokemonSpringDataJpaRepository, Mockito.times(1)).save(pokemonEntityMapper.toDbo(pokemon));
     }
 
     @Test

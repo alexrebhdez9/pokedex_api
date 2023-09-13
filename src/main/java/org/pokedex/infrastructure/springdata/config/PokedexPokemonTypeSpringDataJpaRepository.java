@@ -1,4 +1,4 @@
-package org.pokedex.infrastructure.repository.jpa;
+package org.pokedex.infrastructure.springdata.config;
 
 import org.pokedex.domain.entity.PokemonType;
 import org.springframework.data.repository.CrudRepository;

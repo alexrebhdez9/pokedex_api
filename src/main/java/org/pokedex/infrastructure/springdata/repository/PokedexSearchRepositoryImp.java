@@ -1,38 +1,40 @@
-package org.pokedex.infrastructure.repository;
+package org.pokedex.infrastructure.springdata.repository;
 
 import org.pokedex.application.dto.PokemonDetailsDto;
 import org.pokedex.domain.entity.Pokemon;
 import org.pokedex.domain.exception.PokedexPokemonNotFoundException;
 import org.pokedex.domain.repository.PokedexSearchRepository;
-import org.pokedex.infrastructure.repository.jpa.PokedexPokemonSpringDataJpaRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Primary;
-import org.springframework.stereotype.Component;
+import org.pokedex.infrastructure.springdata.config.PokedexPokemonSpringDataJpaRepository;
+import org.pokedex.infrastructure.springdata.dbo.PokemonEntity;
+import org.pokedex.infrastructure.springdata.mapper.PokemonEntityMapper;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
-@Component
-@Primary
+@Repository
 public class PokedexSearchRepositoryImp implements PokedexSearchRepository {
 
 
     private final PokedexPokemonSpringDataJpaRepository pokedexPokemonSpringDataJpaRepository;
 
-    @Autowired
-    public PokedexSearchRepositoryImp(final PokedexPokemonSpringDataJpaRepository pokedexPokemonSpringDataJpaRepository) {
-        this.pokedexPokemonSpringDataJpaRepository = pokedexPokemonSpringDataJpaRepository;
-    }
+    private PokemonEntityMapper pokemonEntityMapper;
 
+    public PokedexSearchRepositoryImp(PokedexPokemonSpringDataJpaRepository pokedexPokemonSpringDataJpaRepository,
+                                      PokemonEntityMapper pokemonEntityMapper) {
+        this.pokedexPokemonSpringDataJpaRepository = pokedexPokemonSpringDataJpaRepository;
+        this.pokemonEntityMapper = pokemonEntityMapper;
+    }
     /**
-     *
      * @param pokemonId
      * @return
      */
     @Override
-    public Optional<Pokemon> findById(Long pokemonId) {
+    public Pokemon findById(Long pokemonId) {
 
-        Optional<Pokemon> pokemonOptional = pokedexPokemonSpringDataJpaRepository.findById(pokemonId);
+        Optional<PokemonEntity> pokemonOptional = pokedexPokemonSpringDataJpaRepository.findById(pokemonId);
 
         if (pokemonOptional.isEmpty()) {
 
@@ -40,7 +42,9 @@ public class PokedexSearchRepositoryImp implements PokedexSearchRepository {
 
         } else {
 
-            return  pokemonOptional;
+            Pokemon pokemon = pokemonEntityMapper.toDomain(pokemonOptional.get());
+
+            return pokemon;
 
         }
     }
@@ -63,7 +67,7 @@ public class PokedexSearchRepositoryImp implements PokedexSearchRepository {
 
         } else {
 
-            return  pokemon;
+            return pokemon;
 
         }
 
@@ -121,7 +125,7 @@ public class PokedexSearchRepositoryImp implements PokedexSearchRepository {
     @Override
     public Iterable<Pokemon> getAllPokemon() {
 
-        Iterable<Pokemon> pokemonList = pokedexPokemonSpringDataJpaRepository.findAll();
+        Iterable<PokemonEntity> pokemonList = pokedexPokemonSpringDataJpaRepository.findAll();
 
         if (!pokemonList.iterator().hasNext()) {
 
@@ -129,7 +133,10 @@ public class PokedexSearchRepositoryImp implements PokedexSearchRepository {
 
         } else {
 
-            return  pokemonList;
+            return  StreamSupport
+                    .stream(pokemonList.spliterator(), true)
+                    .map(pokemon -> pokemonEntityMapper.toDomain(pokemon))
+                    .collect(Collectors.toList());
 
         }
 

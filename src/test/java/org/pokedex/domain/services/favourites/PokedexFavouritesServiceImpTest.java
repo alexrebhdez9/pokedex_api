@@ -9,6 +9,8 @@ import org.pokedex.domain.entity.Pokemon;
 import org.pokedex.domain.exception.PokedexAddFavouritesException;
 import org.pokedex.domain.repository.PokedexFavouritesRepository;
 import org.pokedex.domain.repository.PokedexSearchRepository;
+import org.pokedex.infrastructure.springdata.dbo.PokemonEntity;
+import org.pokedex.infrastructure.springdata.mapper.PokemonEntityMapper;
 import org.pokedex.mother.PokemonMother;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -29,6 +31,8 @@ public class PokedexFavouritesServiceImpTest {
 
     @InjectMocks
     private PokedexFavouritesServiceImp pokedexFavouritesService;
+
+    private PokemonEntityMapper pokemonEntityMapper;
 
     @Test
     public void testAddPokemonFavourite() {

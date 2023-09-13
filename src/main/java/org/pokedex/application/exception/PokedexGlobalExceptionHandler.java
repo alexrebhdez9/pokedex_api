@@ -1,5 +1,8 @@
-package org.pokedex.domain.exception;
+package org.pokedex.application.exception;
 
+import org.pokedex.domain.exception.PokedexAddFavouritesException;
+import org.pokedex.domain.exception.PokedexPokemonNotFoundException;
+import org.pokedex.domain.exception.PokedexRemoveFavouritesException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
