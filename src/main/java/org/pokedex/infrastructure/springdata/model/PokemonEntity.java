@@ -1,4 +1,4 @@
-package org.pokedex.infrastructure.springdata.dbo;
+package org.pokedex.infrastructure.springdata.model;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnore;

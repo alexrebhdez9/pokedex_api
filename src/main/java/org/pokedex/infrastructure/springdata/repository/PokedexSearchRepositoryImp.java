@@ -5,12 +5,11 @@ import org.pokedex.domain.entity.Pokemon;
 import org.pokedex.domain.exception.PokedexPokemonNotFoundException;
 import org.pokedex.domain.repository.PokedexSearchRepository;
 import org.pokedex.infrastructure.springdata.config.PokedexPokemonSpringDataJpaRepository;
-import org.pokedex.infrastructure.springdata.dbo.PokemonEntity;
+import org.pokedex.infrastructure.springdata.model.PokemonEntity;
 import org.pokedex.infrastructure.springdata.mapper.PokemonEntityMapper;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 

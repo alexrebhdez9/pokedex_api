@@ -6,7 +6,6 @@ import org.pokedex.domain.exception.PokedexPokemonNotFoundException;
 import org.pokedex.domain.exception.PokedexRemoveFavouritesException;
 import org.pokedex.domain.repository.PokedexFavouritesRepository;
 import org.pokedex.infrastructure.springdata.config.PokedexPokemonSpringDataJpaRepository;
-import org.pokedex.infrastructure.springdata.dbo.PokemonEntity;
 import org.pokedex.infrastructure.springdata.mapper.PokemonEntityMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;

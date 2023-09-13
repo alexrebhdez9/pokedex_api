@@ -1,9 +1,6 @@
 package org.pokedex.domain.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.persistence.*;
 import lombok.*;
-import org.pokedex.infrastructure.springdata.dbo.PokemonEntity;
 
 import java.util.List;
 
